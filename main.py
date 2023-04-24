@@ -1,40 +1,51 @@
 import mysql.connector
-import pandas as pd
 import os
-from collections import namedtuple
 
 try :
     conn = mysql.connector.connect(
         user="root",
         password="",
-        database="resto" #Ubah nama database disini dan sesuaikan nama tabelnya
     )
+    
 except mysql.connector.Error as e:
     print(f"Terjadi error pada program : {e}")
 
 cur = conn.cursor()
-def showMenu():
-    cur.execute("SELECT * FROM menu")
-    for menu in cur:
-        print(list(menu))
 
-def showPembelian():
-    cur.execute("SELECT * FROM pembelian")
-    for pembelian in cur:
-        print(list(pembelian))
+def queryInsert():
+    pass
+
+def querySelect():
+    pass
+
+def selectDatabase():
+    os.system("cls")
+    cur.execute("SHOW DATABASES")
+    listDatabase = ["".join(x) for x in cur]
+    print("="*25)
+    print("|{:^23}|".format("DATABASE"))
+    print("="*25)
+    for i in range(len(listDatabase)):
+        print("|{:<23}|".format(listDatabase[i]))
+    print("="*25)
+
+def showTables():
+    pass
 
 def mainMenu():
-    status = "y"
-    while status != "n":
-        os.system("cls")
-        print("[1] Lihat Data Menu Resto")
-        print("[2] Lihat Data Pembelian")
-        pilihMenu = int(input("Pilih menu : "))
-        if pilihMenu == 1:
-            showMenu()
-        elif pilihMenu == 2:
-            showPembelian()
-        
-        status = input("Lanjut?[Y/N] : ").lower()
+    os.system("cls")
+    print("="*20)
+    print("[1] Pilih database")
+    print("[2] Exit")
+    print("="*20)
+
+    choose = int(input("Masukkan pilihan : "))
+    if choose == 1:
+        selectDatabase()
+    elif choose == 2:
+        exit()
+    else :
+        input("Input tidak sesuai!\n Tekan enter untuk lanjut!")
+        mainMenu()
 
 mainMenu()
