@@ -16,12 +16,28 @@ def queryInsert():
     pass
 
 def querySelect():
-    pass
+    os.system("cls")
+    useDatabase()
+
+def showTable():
+    os.system("cls")
+    useDatabase()
+    cur.execute("SHOW TABLES")
+    listTable = ["".join(x) for x in cur]
+
+    print("="*15)
+    print("|{:13}|".format("TABEL"))
+    print("="*15)
+    for i in range(len(listTable)):
+        print("|{:^13}|".format(listTable[i]))
+    print("="*15)
+
 
 def selectDatabase():
     os.system("cls")
     cur.execute("SHOW DATABASES")
     listDatabase = ["".join(x) for x in cur]
+
     print("="*25)
     print("|{:^23}|".format("DATABASE"))
     print("="*25)
@@ -29,8 +45,12 @@ def selectDatabase():
         print("|{:<23}|".format(listDatabase[i]))
     print("="*25)
 
-def showTables():
-    pass
+    choose = input("Pilih database : ")
+    cur.execute(f"USE {choose}")
+    useDatabase()
+
+def useDatabase():
+    print("Database saat ini :", conn.database)
 
 def mainMenu():
     os.system("cls")
