@@ -9,15 +9,12 @@ try :
     
 except mysql.connector.Error as e:
     print(f"Terjadi error pada program : {e}")
+    os.system("C:\\xampp\\xampp-control.exe")
 
 cur = conn.cursor()
 
 def queryInsert():
     pass
-
-def querySelect():
-    os.system("cls")
-    useDatabase()
 
 def showTable():
     os.system("cls")
@@ -25,13 +22,21 @@ def showTable():
     cur.execute("SHOW TABLES")
     listTable = ["".join(x) for x in cur]
 
-    print("="*15)
-    print("|{:13}|".format("TABEL"))
-    print("="*15)
+    print("="*40)
+    print("|{:38}|".format("TABEL"))
+    print("="*40)
     for i in range(len(listTable)):
-        print("|{:^13}|".format(listTable[i]))
-    print("="*15)
+        print("|{:^38}|".format(listTable[i]))
+    print("="*40)
 
+def querySelect():
+    showTable()
+    choose1 = input("Pilih table : ")
+    cur.execute(f"SELECT * FROM {choose1}")
+    conTable = [list(x) for x in cur]
+
+    for i in range(len(conTable)):
+        print(conTable[i])
 
 def selectDatabase():
     os.system("cls")
@@ -66,6 +71,23 @@ def mainMenu():
         exit()
     else :
         input("Input tidak sesuai!\n Tekan enter untuk lanjut!")
-        mainMenu()
+    
+    showTable()
+
+    print("="*20)
+    print("[1] Pilih table")
+    print("[2] Exit")
+    print("="*20)
+
+    choose1 = int(input("Masukkan pilihan : "))
+    if choose1 == 1:
+        querySelect()
+    elif choose1 == 2:
+        exit()
+    else :
+        input("Input tidak sesuai!\n Tekan enter untuk lanjut!")
+
+    querySelect()
+
 
 mainMenu()
