@@ -1,2 +1,2 @@
-# cashbase
-program kasir yang terhubung dengan database localhost (XAMMP)
+# Pemrograman Database
+program untuk melakukan manipulasi pada database yang terhubung dengan (XAMPP)
