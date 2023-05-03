@@ -38,36 +38,6 @@ def showTable(myConnection, myCursor):
         print("|{:^38}|".format(listTable[i]))
     print("="*40)
 
-def queryInsert(myConnection, myCursor):
-    repeat = "y"
-    while repeat != "n":
-        showTable(myConnection, myCursor)
-        print("="*20)
-        print("[1] Pilih table")
-        print("[2] Exit")
-        print("="*20)
-        choose = int(input("Masukkan pilihan : "))
-
-        if choose == 1:
-            table = input("Pilih table : ")
-            myCursor.execute(f"DESC {table}")
-            field = [f[0] for f in myCursor]
-            value = []
-
-            for i in range(len(field)):
-                value.append(input(f"Masukkan {field[i]} : "))
-            
-            sqlInsertQuery = f"""INSERT INTO {table} VALUES {tuple(value)}"""
-
-            myCursor.execute(sqlInsertQuery)
-
-        elif choose == 2:
-            break
-        else:
-            input("Input tidak sesuai!\nEnter untuk mengulang!")
-
-        repeat = input("\nIngin melanjutkan? [Y/N or Any key] : ").lower()
-
 def querySelect(myConnection, myCursor):
     repeat = "y"
     while repeat != "n":
@@ -92,6 +62,72 @@ def querySelect(myConnection, myCursor):
 
         repeat = input("\nIngin melanjutkan? [Y/N or Any key] : ").lower()
 
+def queryInsert(myConnection, myCursor):
+    repeat = "y"
+    while repeat != "n":
+        showTable(myConnection, myCursor)
+        print("="*20)
+        print("[1] Pilih table")
+        print("[2] Exit")
+        print("="*20)
+        choose = int(input("Masukkan pilihan : "))
+
+        if choose == 1:
+            table = input("Pilih table : ")
+            myCursor.execute(f"DESC {table}")
+            field = [f[0] for f in myCursor]
+            value = []
+
+            for i in range(len(field)):
+                value.append(input(f"Masukkan {field[i]} : "))
+            
+            sqlInsertQuery = f"""INSERT INTO {table} VALUES {tuple(value)}"""
+
+            myCursor.execute(sqlInsertQuery)
+        elif choose == 2:
+            break
+        else:
+            input("Input tidak sesuai!\nEnter untuk mengulang!")
+
+        repeat = input("\nIngin melanjutkan? [Y/N or Any key] : ").lower()
+
+def queryUpdate(myConnection, myCursor):
+    repeat = "y"
+    while repeat != "n":
+        showTable(myConnection, myCursor)
+        print("="*20)
+        print("[1] Pilih table")
+        print("[2] Exit")
+        print("="*20)
+        choose = int(input("Masukkan pilihan : "))
+    
+        if choose == 1:
+            table = input("Pilih table : ")
+            myCursor.execute(f"DESC {table}")
+            field = [f[0] for f in myCursor]
+            print(field)
+
+            myCursor.execute(f"SELECT * FROM {table}")
+            conTable = [list(x) for x in myCursor]
+
+            for i in range(len(conTable)):
+                print(conTable[i])
+            
+            selectField = input("Pilih field yang akan diupdate : ")
+            newValue = input("Masukkan data baru : ")
+            selectData = input("Masukkan primary key (kolom pertama): ")
+
+            sqlUpdateQuery = f"""UPDATE {table}
+                                SET {selectField} = '{newValue}' 
+                                WHERE {field[0]} = '{selectData}'"""
+            
+            myCursor.execute(sqlUpdateQuery)
+
+        elif choose == 2:
+            break
+        else:
+            input("Input tidak sesuai!\nEnter untuk mengulang!")
+
 def mainMenu(myConnection, myCursor):
     while True:
         os.system("cls")
@@ -100,6 +136,7 @@ def mainMenu(myConnection, myCursor):
         print("[1] Pilih database")
         print("[2] Query select")
         print("[3] Query insert")
+        print("[4] Query update")
         print("[0] Exit")
         print("="*20)
 
@@ -110,6 +147,8 @@ def mainMenu(myConnection, myCursor):
             querySelect(myConnection, myCursor)
         elif choose == 3:
             queryInsert(myConnection, myCursor)
+        elif choose == 4:
+            queryUpdate(myConnection, myCursor)
         elif choose == 0:
             break
         else:
