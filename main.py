@@ -1,5 +1,6 @@
 import mysql.connector
 import os, asyncio
+from prettytable import from_db_cursor
 
 async def connectToDatabase():
     os.system("C:\\xampp\\xampp_start.exe")
@@ -11,14 +12,9 @@ def lobby(myCursor):
     os.system("cls")
     print("===SELAMAT DATANG DI PROGRAM DATABASE===")
     myCursor.execute("SHOW DATABASES")
-    listDatabase = ["".join(x) for x in myCursor]
+    listDatabase = from_db_cursor(myCursor)
 
-    print("="*25)
-    print("|{:^23}|".format("DATABASE"))
-    print("="*25)
-    for i in range(len(listDatabase)):
-        print("|{:<23}|".format(listDatabase[i]))
-    print("="*25)
+    print(listDatabase)
 
     choose = input("Pilih database : ")
     myCursor.execute(f"USE {choose}")
@@ -26,14 +22,9 @@ def lobby(myCursor):
 def selectDatabase(myCursor):
     os.system("cls")
     myCursor.execute("SHOW DATABASES")
-    listDatabase = ["".join(x) for x in myCursor]
+    listDatabase = from_db_cursor(myCursor)
 
-    print("="*25)
-    print("|{:^23}|".format("DATABASE"))
-    print("="*25)
-    for i in range(len(listDatabase)):
-        print("|{:<23}|".format(listDatabase[i]))
-    print("="*25)
+    print(listDatabase)
 
     choose = input("Pilih database : ")
     myCursor.execute(f"USE {choose}")
@@ -45,14 +36,9 @@ def showTable(myConnection, myCursor):
     os.system("cls")
     useDatabase(myConnection)
     myCursor.execute("SHOW TABLES")
-    listTable = ["".join(x) for x in myCursor]
+    listTable = from_db_cursor(myCursor)
 
-    print("="*40)
-    print("|{:^38}|".format("TABEL"))
-    print("="*40)
-    for i in range(len(listTable)):
-        print("|{:^38}|".format(listTable[i]))
-    print("="*40)
+    print(listTable)
 
 def querySelect(myConnection, myCursor):
     repeat = "y"
@@ -67,16 +53,15 @@ def querySelect(myConnection, myCursor):
         if choose == 1:
             table = input("Pilih table : ")
             myCursor.execute(f"SELECT * FROM {table}")
-            conTable = [list(x) for x in myCursor]
+            tableData = from_db_cursor(myCursor)
 
-            for i in range(len(conTable)):
-                print(conTable[i])
+            print(tableData)
         elif choose == 2:
             break
         else:
             input("Input tidak sesuai!\nEnter untuk mengulang!")
 
-        repeat = input("\nIngin melanjutkan? [Y/N or Any key] : ").lower()
+        repeat = input("\nIngin melanjutkan? [Y or Any key/N] : ").lower()
 
 def queryInsert(myConnection, myCursor):
     repeat = "y"
@@ -100,12 +85,17 @@ def queryInsert(myConnection, myCursor):
             sqlInsertQuery = f"""INSERT INTO {table} VALUES {tuple(value)}"""
 
             myCursor.execute(sqlInsertQuery)
+            
+            if myCursor.rowcount > 0:
+                print(f"Query OK, {myCursor.rowcount} row inserted.")
+            else:
+                print("Query gagal dieksekusi")
         elif choose == 2:
             break
         else:
             input("Input tidak sesuai!\nEnter untuk mengulang!")
 
-        repeat = input("\nIngin melanjutkan? [Y/N or Any key] : ").lower()
+        repeat = input("\nIngin melanjutkan? [Y or Any key/N] : ").lower()
 
 def queryUpdate(myConnection, myCursor):
     repeat = "y"
@@ -121,13 +111,11 @@ def queryUpdate(myConnection, myCursor):
             table = input("Pilih table : ")
             myCursor.execute(f"DESC {table}")
             field = [f[0] for f in myCursor]
-            print(field)
 
             myCursor.execute(f"SELECT * FROM {table}")
-            conTable = [list(x) for x in myCursor]
+            tableData = from_db_cursor(myCursor)
 
-            for i in range(len(conTable)):
-                print(conTable[i])
+            print(tableData)
             
             selectField = input("Pilih field yang akan diupdate : ")
             newValue = input("Masukkan data baru : ")
@@ -139,10 +127,16 @@ def queryUpdate(myConnection, myCursor):
             
             myCursor.execute(sqlUpdateQuery)
 
+            if myCursor.rowcount > 0:
+                print(f"Query OK, {myCursor.rowcount} row updated.")
+            else:
+                print("Query gagal dieksekusi")
         elif choose == 2:
             break
         else:
             input("Input tidak sesuai!\nEnter untuk mengulang!")
+        
+        repeat = input("\nIngin melanjutkan? [Y or Any key/N] : ").lower()
 
 def queryDelete(myConnection, myCursor):
     repeat = "y"
@@ -156,15 +150,11 @@ def queryDelete(myConnection, myCursor):
 
         if choose == 1:
             table = input("Pilih table : ")
-            myCursor.execute(f"DESC {table}")
-            field = [f[0] for f in myCursor]
-            print(field)
 
             myCursor.execute(f"SELECT * FROM {table}")
-            conTable = [list(x) for x in myCursor]
+            tableData = from_db_cursor(myCursor)
 
-            for i in range(len(conTable)):
-                print(conTable[i])
+            print(tableData)
                 
             selectFieldDelete = input("Pilih field yang akan didelete : ")
             dataDelete = input("Masukkan data yang ingin didelete : ")
@@ -174,39 +164,51 @@ def queryDelete(myConnection, myCursor):
 
             myCursor.execute(sqlDeleteQuery) 
 
+            if myCursor.rowcount > 0:
+                print(f"Query OK, {myCursor.rowcount} row deleted.")
+            else:
+                print("Query gagal dieksekusi")
         elif choose == 2:
             break
         else:
-            input("Input tidak sesuai!\nEnter untuk mengulangi!")            
+            input("Input tidak sesuai!\nEnter untuk mengulangi!")
+
+        repeat = input("\nIngin melanjutkan? [Y or Any key/N] : ").lower()           
 
 def mainMenu(myConnection, myCursor):
-    while True:
-        os.system("cls")
-        useDatabase(myConnection)
-        print("="*20)
-        print("[1] Pilih database")
-        print("[2] Query select")
-        print("[3] Query insert")
-        print("[4] Query update")
-        print("[5] Query delete")
-        print("[0] Exit")
-        print("="*20)
+    try :
+        while True:
+            os.system("cls")
+            useDatabase(myConnection)
+            print("="*20)
+            print("[1] Pilih database")
+            print("[2] Query select")
+            print("[3] Query insert")
+            print("[4] Query update")
+            print("[5] Query delete")
+            print("[0] Exit")
+            print("="*20)
 
-        choose = int(input("Masukkan pilihan : "))
-        if choose == 1:
-            selectDatabase(myCursor)
-        elif choose == 2:
-            querySelect(myConnection, myCursor)
-        elif choose == 3:
-            queryInsert(myConnection, myCursor)
-        elif choose == 4:
-            queryUpdate(myConnection, myCursor)
-        elif choose == 5:
-            queryDelete(myConnection, myCursor)
-        elif choose == 0:
-            break
-        else:
-            input("Input tidak sesuai!\n Tekan enter untuk lanjut!")
+            choose = int(input("Masukkan pilihan : "))
+            if choose == 1:
+                selectDatabase(myCursor)
+            elif choose == 2:
+                querySelect(myConnection, myCursor)
+            elif choose == 3:
+                queryInsert(myConnection, myCursor)
+            elif choose == 4:
+                queryUpdate(myConnection, myCursor)
+            elif choose == 5:
+                queryDelete(myConnection, myCursor)
+            elif choose == 0:
+                break
+            else:
+                input("Input tidak sesuai!\n Tekan enter untuk lanjut!")
+    
+    except Exception as error:
+        print(f"Terjadi error : {error}")
+        input("Enter untuk mengulang!")
+        mainMenu(myConnection, myCursor)
 
 async def main():
     await connectToDatabase()
@@ -225,6 +227,7 @@ async def main():
     myCursor = myConnection.cursor()
     input("Press enter to continue")
     try :
+        connectToDatabase()
         lobby(myCursor)
         mainMenu(myConnection, myCursor)
     except Exception as error:
