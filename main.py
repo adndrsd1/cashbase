@@ -7,6 +7,22 @@ async def connectToDatabase():
 async def closeConnection():
     os.system("C:\\xampp\\xampp_stop.exe")
 
+def lobby(myCursor):
+    os.system("cls")
+    print("===SELAMAT DATANG DI PROGRAM DATABASE===")
+    myCursor.execute("SHOW DATABASES")
+    listDatabase = ["".join(x) for x in myCursor]
+
+    print("="*25)
+    print("|{:^23}|".format("DATABASE"))
+    print("="*25)
+    for i in range(len(listDatabase)):
+        print("|{:<23}|".format(listDatabase[i]))
+    print("="*25)
+
+    choose = input("Pilih database : ")
+    myCursor.execute(f"USE {choose}")
+
 def selectDatabase(myCursor):
     os.system("cls")
     myCursor.execute("SHOW DATABASES")
@@ -209,6 +225,8 @@ async def main():
     myCursor = myConnection.cursor()
     input("Press enter to continue")
     try :
+        connectToDatabase()
+        lobby(myCursor)
         mainMenu(myConnection, myCursor)
     except Exception as error:
         print(f"Terjadi error : {error}")
