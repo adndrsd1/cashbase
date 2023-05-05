@@ -225,7 +225,6 @@ async def main():
     myCursor = myConnection.cursor()
     input("Press enter to continue")
     try :
-        connectToDatabase()
         lobby(myCursor)
         mainMenu(myConnection, myCursor)
     except Exception as error:
